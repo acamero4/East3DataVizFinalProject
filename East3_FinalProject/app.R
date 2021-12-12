@@ -15,21 +15,21 @@ library(leaflet)
 # setwd("C:\\Users\\msisk1\\Documents\\GIT\\Teaching\\--Data-Viz-2021-Fall\\Week04\\LiveSession\\East_Demo")
 
 
-elections <- st_read("ElectionResultsByState.shp")
+abandoned <- st_read("Abandoned_Property_Parcels.shp")
 pal <- colorFactor(palette = c("blue","red"), domain = c("D", "R"))
 
-elections.data <- elections %>% st_set_geometry(NULL)
+abandoned.data <- abandoned %>% st_set_geometry(NULL)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
   # Application title
-  titlePanel("Elections Viewer"),
+  titlePanel("South Bend City Viewer"),
   
   # Sidebar with a slider input for number of bins 
   sidebarLayout(
     sidebarPanel(
-      selectInput(inputId = "year",label = "Choose a Year",choices = names(elections[10:67]%>%st_set_geometry(NULL)))
+      selectInput(inputId = "Outcome",label = "Choose a Outcome",choices = names(abandoned[1]%>%st_set_geometry(NULL)))
     ),
     
     # Show a plot of the generated distribution
@@ -56,16 +56,16 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   elec.subset <- reactive({
-    elections.data[,input$year]
+    abandoned.data[,input$Outcome_St]
   })
   output$piePlot <- renderPlot({
-    print(elections[,input$year])
+    print(abandoned[,input$Outcome_St])
     pie(table(elec.subset()))
   })
   output$map <- renderLeaflet({
     leaflet()%>%
       addTiles()%>%
-      addPolygons(data =elections, color = ~pal(elec.subset()))
+      addPolygons(data =abandoned, color = ~pal(elec.subset()))
   })
 }
 
